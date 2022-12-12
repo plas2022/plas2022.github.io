@@ -64,6 +64,7 @@
 <!-- Page Content -->
 
 <script src="js/jquery-3.6.1.min.js"></script>
+<script src="js/moment.min.js"></script>
 
 <script>
 $(document).ready(function () {
@@ -82,7 +83,7 @@ $(document).ready(function () {
         let tz = $('input[type="radio"]:checked')[0].value || undefined;
         for (let el of $(".Utc-Time-Box")) {
             el.textContent = el.getAttribute("time").split("-").map(time =>
-                (new Date(time + " " + date + " UTC")).toLocaleTimeString([],
+                moment.utc(time + " " + date, "hh:mm MMMM D, YYYY").toDate().toLocaleTimeString([],
                     {timeStyle: "short", hour12: false, timeZone: tz})).join(" - ");
         }
     }
