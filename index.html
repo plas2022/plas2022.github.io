@@ -67,16 +67,28 @@
 
 <script>
 $(document).ready(function () {
-    $('input[type="radio"]').click(function () {
-       if ($(this).attr("value") == "est") {
-            $(".Est-Time-Box").show('slow');
-            $(".Cet-Time-Box").hide('slow');
+    let formatter = new Intl.DateTimeFormat([], {timeZoneName: "short"});
+    let tzName = formatter.formatToParts(new Date())
+        .map(({type, value}) => type == "timeZoneName" ? value : "").join("");
+    $("#tzname")[0].textContent = tzName;
+
+    let date = $("h3 > small")[0].textContent;
+
+    for (let el of $(".Utc-Time-Box")) {
+        el.setAttribute("time", el.textContent);
+    }
+
+    function setTime() {
+        let tz = $('input[type="radio"]:checked')[0].value || undefined;
+        for (let el of $(".Utc-Time-Box")) {
+            el.textContent = el.getAttribute("time").split("-").map(time =>
+                (new Date(time + " " + date + " UTC")).toLocaleTimeString([],
+                    {timeStyle: "short", hour12: false, timeZone: tz})).join(" - ");
         }
-        if ($(this).attr("value") == "cet") {
-            $(".Est-Time-Box").hide('slow');
-            $(".Cet-Time-Box").show('slow');
-        }
-     });
+    }
+
+    setTime();
+    $('input[type="radio"]').click(setTime);
 });
 </script>
 
@@ -225,10 +237,15 @@ $(document).ready(function () {
       <thead>
       <th style="width: 12%">
         <label class="radio-inline">
-         <input type="radio" id="cet" name="time-radio" value="cet" checked> CET
+         <input type="radio" id="localtz" name="time-radio" value="" checked>
+         <span id="tzname">Local</span>
+        </label>
+        <br/>
+        <label class="radio-inline">
+         <input type="radio" id="cet" name="time-radio" value="Europe/Stockholm"> CET
         </label>
         <label class="radio-inline">
-         <input type="radio" id="est" name="time-radio" value="est"> EST
+         <input type="radio" id="est" name="time-radio" value="America/New_York"> EST
          </label>
        </th>
       <th style="width: 75%">
@@ -240,8 +257,7 @@ $(document).ready(function () {
       </thead>
       <tbody><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">17:00 - 17:05</div>
-           <div class="Est-Time-Box"  style="display:none">11:00 - 11:10</div>
+           <div class="Utc-Time-Box">16:00 - 16:05</div>
         </div>
       </div>
          </th>
@@ -250,8 +266,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">17:05 - 18:00</div>
-           <div class="Est-Time-Box"  style="display:none">11:05 - 12:00</div>
+           <div class="Utc-Time-Box">16:05 - 17:00</div>
         </div>
       </div>
          </th>
@@ -262,8 +277,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">18:00 - 18:10</div>
-           <div class="Est-Time-Box"  style="display:none">12:00 - 12:10</div>
+           <div class="Utc-Time-Box">17:00 - 17:10</div>
         </div>
       </div>
          </th>
@@ -272,8 +286,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">18:10 - 19:25</div>
-           <div class="Est-Time-Box"  style="display:none">12:10 - 13:25</div>
+           <div class="Utc-Time-Box">17:10 - 18:25</div>
         </div>
       </div>
          </th>
@@ -288,8 +301,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">19:25 - 19:35</div>
-           <div class="Est-Time-Box"  style="display:none">13:25 - 13:35</div>
+           <div class="Utc-Time-Box">18:25 - 18:35</div>
         </div>
       </div>
          </th>
@@ -298,8 +310,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">19:35 - 20:35</div>
-           <div class="Est-Time-Box"  style="display:none">13:35 - 14:35</div>
+           <div class="Utc-Time-Box">18:35 - 19:35</div>
         </div>
       </div>
          </th>
@@ -314,8 +325,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">20:35 - 20:45</div>
-           <div class="Est-Time-Box"  style="display:none">14:35 - 14:45</div>
+           <div class="Utc-Time-Box">19:35 - 19:45</div>
         </div>
       </div>
          </th>
@@ -324,8 +334,7 @@ $(document).ready(function () {
        </tr>
     </ul><tr>
          <th scope="row"> 
-           <div class="Cet-Time-Box">20:45 - 22:00</div>
-           <div class="Est-Time-Box"  style="display:none">14:45 - 16:00</div>
+           <div class="Utc-Time-Box">19:45 - 21:00</div>
         </div>
       </div>
          </th>
